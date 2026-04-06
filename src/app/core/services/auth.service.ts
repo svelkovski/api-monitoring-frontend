@@ -25,14 +25,28 @@ export class AuthService {
     localStorage.setItem('token', token);
   }
 
+  saveUsername(username: string): void {
+    localStorage.setItem('username', username);
+  }
+
+  getUsername(): string {
+    return localStorage.getItem('username') ?? '';
+  }
+
   login(data: LoginRequest): Observable<LoginResponse> {
     return this.httpClient
       .post<LoginResponse>(`${this.apiUrl}/login`, data)
-      .pipe(tap((response) => this.saveToken(response.token)));
+      .pipe(
+        tap((response) => {
+          this.saveToken(response.token);
+          this.saveUsername(data.username);
+        }),
+      );
   }
 
   logout(): void {
     localStorage.removeItem('token');
+    localStorage.removeItem('username');
   }
 
   getToken(): string | null {

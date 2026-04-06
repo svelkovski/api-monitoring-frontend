@@ -1,0 +1,151 @@
+<div class="flex h-screen bg-gray-50">
+  <app-sidebar />
+
+  <main class="flex-1 overflow-y-auto p-6">
+    <div class="flex items-center justify-between mb-5">
+      <div>
+        <h1 class="text-base font-medium text-gray-900">Your APIs</h1>
+        <p class="text-xs text-gray-400 mt-0.5">
+          Monitoring {{ apis.length }} endpoints · updates every 30s
+        </p>
+      </div>
+      <button
+        (click)="openCreate()"
+        class="bg-gray-900 text-white text-xs font-medium px-3 py-1.5 rounded-lg hover:bg-gray-700 transition"
+      >
+        + Add API
+      </button>
+    </div>
+
+    <app-stats [apis]="apis" />
+
+    @if (loading) {
+      <div class="flex items-center justify-center py-20">
+        <p class="text-xs text-gray-400">Loading...</p>
+      </div>
+    }
+
+    @if (error) {
+      <div
+        class="flex items-center gap-2 mb-4 px-4 py-2.5 bg-red-50 border border-red-100 rounded-lg"
+      >
+        <span class="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0"></span>
+        <p class="text-xs text-red-600">
+          {{ error }}
+        </p>
+      </div>
+    }
+
+    @if (!loading && apis.length === 0) {
+      <div class="bg-white border border-gray-200 rounded-xl p-16 text-center">
+        <p class="text-sm text-gray-400">No APIs monitored yet.</p>
+        <button
+          (click)="openCreate()"
+          class="inline-block mt-4 bg-gray-900 text-white px-4 py-2 rounded-lg text-xs font-medium hover:bg-gray-700 transition"
+        >
+          Add your first API
+        </button>
+      </div>
+    }
+
+    @if (!loading && apis.length > 0) {
+      <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
+        <div
+          class="grid grid-cols-[2fr_3fr_80px_80px_90px] px-4 py-2.5 border-b border-gray-100"
+        >
+          <p class="text-xs uppercase tracking-wide font-medium text-gray-400">
+            Name
+          </p>
+          <p class="text-xs uppercase tracking-wide font-medium text-gray-400">
+            URL
+          </p>
+          <p class="text-xs uppercase tracking-wide font-medium text-gray-400">
+            Method
+          </p>
+          <p class="text-xs uppercase tracking-wide font-medium text-gray-400">
+            Status
+          </p>
+          <p class="text-xs uppercase tracking-wide font-medium text-gray-400">
+            Response
+          </p>
+        </div>
+        @for (api of apis; track api.id) {
+          <div
+            class="grid grid-cols-[2fr_3fr_80px_80px_90px] px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition cursor-pointer items-center"
+            [routerLink]="['/api', api.id]"
+          >
+            <p class="text-sm font-medium text-gray-900">{{ api.name }}</p>
+            <p class="text-xs text-gray-400 truncate pr-4">{{ api.url }}</p>
+            <div>
+              <span
+                class="text-xs font-mono bg-gray-100 text-gray-600 px-2 py-0.5 rounded"
+              >
+                {{ api.method }}
+              </span>
+            </div>
+            <div>
+              @if (api.status === "UP") {
+                <span
+                  class="text-xs font-medium bg-green-50 text-green-700 px-2 py-0.5 rounded-full"
+                  >UP</span
+                >
+              } @else if (api.status === "DOWN") {
+                <span
+                  class="text-xs font-medium bg-red-50 text-red-700 px-2 py-0.5 rounded-full"
+                  >DOWN</span
+                >
+              } @else {
+                <span
+                  class="text-xs font-medium bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full"
+                  >UNKNOWN</span
+                >
+              }
+            </div>
+            <p class="text-xs text-gray-400">
+              {{ api.responseTime ? api.responseTime + "ms" : "—" }}
+            </p>
+
+            <div class="flex items-center gap-3">
+              @if (confirmDeleteId === api.id) {
+                <span class="text-xs text-gray-500">Sure?</span>
+                <button
+                  (click)="confirmDelete(api, $event)"
+                  class="text-xs text-red-500 hover:text-red-700 font-medium transition"
+                >
+                  Yes
+                </button>
+                <button
+                  (click)="cancelDelete($event)"
+                  class="text-xs text-gray-400 hover:text-gray-900 transition"
+                >
+                  No
+                </button>
+              } @else {
+                <button
+                  (click)="openEdit(api, $event)"
+                  class="text-xs text-gray-400 hover:text-gray-900 transition"
+                >
+                  Edit
+                </button>
+                <button
+                  (click)="deleteApi(api, $event)"
+                  class="text-xs text-red-400 hover:text-red-600 transition"
+                >
+                  Delete
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </main>
+</div>
+
+@if (showModal) {
+  <app-api-modal
+    [editingApi]="editingApi"
+    (save)="onApiSaved()"
+    (cancel)="closeModal()"
+  ></app-api-modal>
+}

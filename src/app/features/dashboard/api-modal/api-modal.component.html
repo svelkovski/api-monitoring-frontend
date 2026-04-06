@@ -1,0 +1,90 @@
+<div
+  class="fixed inset-0 bg-black/30 flex items-center justify-center z-50"
+  (click)="onCancel()"
+>
+  <div
+    class="bg-white rounded-xl border border-gray-200 p-6 w-full max-w-md"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="flex items-center justify-between mb-5">
+      <h2 class="text-sm font-medium text-gray-900">
+        {{ editingApi ? "Edit API" : "Add API" }}
+      </h2>
+      <button
+        (click)="onCancel()"
+        class="text-gray-400 hover:text-gray-900 text-lg leading-none"
+      >
+        ×
+      </button>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4">
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1">Name</label>
+        <input
+          formControlName="name"
+          type="text"
+          placeholder="My API"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition"
+        />
+        @if (form.get("name")?.touched && form.get("name")?.invalid) {
+          <p class="text-red-500 text-xs mt-1">Name is required</p>
+        }
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1">URL</label>
+        <input
+          formControlName="url"
+          type="text"
+          placeholder="https://api.example.com/health"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition"
+        />
+        @if (form.get("url")?.touched && form.get("url")?.invalid) {
+          <p class="text-red-500 text-xs mt-1">
+            Valid URL is required (must start with http:// or https://)
+          </p>
+        }
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1"
+          >Method</label
+        >
+        <select
+          formControlName="method"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition"
+        >
+          <option value="GET">GET</option>
+          <option value="POST">POST</option>
+          <option value="PUT">PUT</option>
+          <option value="DELETE">DELETE</option>
+          <option value="PATCH">PATCH</option>
+        </select>
+      </div>
+
+      @if (formError) {
+        <p class="text-red-500 text-xs">{{ formError }}</p>
+      }
+
+      <div class="flex gap-2 pt-1">
+        <button
+          type="button"
+          (click)="onCancel()"
+          class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          [disabled]="formLoading"
+          class="flex-1 px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-700 transition disabled:opacity-50"
+        >
+          {{
+            formLoading ? "Saving..." : editingApi ? "Save changes" : "Add API"
+          }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
