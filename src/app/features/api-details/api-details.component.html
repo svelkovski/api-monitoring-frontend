@@ -1,0 +1,145 @@
+<div class="flex h-screen bg-gray-50">
+  <app-sidebar />
+
+  <main class="flex-1 overflow-y-auto p-6">
+    @if (loading) {
+      <div class="flex items-center justify-center py-20">
+        <p class="text-xs text-gray-400">Loading...</p>
+      </div>
+    }
+
+    @if (error) {
+      <p class="text-xs text-red-500">{{ error }}</p>
+    }
+
+    @if (!loading && api) {
+      <div class="flex items-start justify-between mb-8">
+        <div>
+          <div class="flex items-center gap-3 mb-2">
+            <h1 class="text-xl font-semibold text-gray-900">{{ api.name }}</h1>
+
+            <span
+              class="text-xs font-medium px-2.5 py-1 rounded-full"
+              [ngClass]="{
+                'bg-green-100 text-green-700': api.status === 'UP',
+                'bg-red-100 text-red-700': api.status === 'DOWN',
+                'bg-gray-100 text-gray-500':
+                  api.status !== 'UP' && api.status !== 'DOWN',
+              }"
+            >
+              {{ api.status }}
+            </span>
+          </div>
+
+          <p class="text-sm text-gray-500 mb-2">{{ api.url }}</p>
+
+          <span
+            class="text-xs font-mono bg-gray-900 text-white px-2 py-0.5 rounded"
+          >
+            {{ api.method }}
+          </span>
+        </div>
+      </div>
+
+      @if (checks.length > 0) {
+        <div
+          class="bg-white rounded-2xl p-6 mb-6 shadow-sm border border-gray-200"
+        >
+          <p class="text-xs font-semibold text-gray-400 mb-4 tracking-wide">
+            RESPONSE TIME
+          </p>
+
+          <app-response-time-chart [checks]="checks" />
+        </div>
+      }
+
+      <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
+        <div
+          class="px-5 py-3 border-b border-gray-100 flex items-center justify-between"
+        >
+          <p class="text-xs uppercase tracking-wide font-medium text-gray-400">
+            Check History
+          </p>
+          @if (checksLoading) {
+            <p class="text-xs text-gray-400">Loading...</p>
+          }
+        </div>
+
+        @if (checks.length === 0 && !checksLoading) {
+          <div class="px-5 py-10 text-center">
+            <p class="text-xs text-gray-400">No checks yet.</p>
+          </div>
+        }
+
+        @if (checks.length > 0) {
+          <div
+            class="grid grid-cols-[1fr_120px_140px] px-6 py-3 border-b border-gray-100"
+          >
+            <p
+              class="text-xs uppercase tracking-wide font-medium text-gray-400"
+            >
+              Checked At
+            </p>
+            <p
+              class="text-xs uppercase tracking-wide font-medium text-gray-400"
+            >
+              Status Code
+            </p>
+            <p
+              class="text-xs uppercase tracking-wide font-medium text-gray-400"
+            >
+              Response Time
+            </p>
+          </div>
+
+          @for (check of checks; track check.id) {
+            <div
+              class="grid grid-cols-[1fr_100px_120px] px-6 py-4 border-b border-gray-100 items-center hover:bg-gray-50 transition"
+            >
+              <p class="text-sm text-gray-600">
+                {{ check.checkedAt | date: "medium" }}
+              </p>
+
+              <span
+                class="inline-flex w-fit text-xs font-semibold px-2.5 py-1 rounded-full"
+                [ngClass]="getStatusBg(check.responseCode)"
+              >
+                {{ check.responseCode === 0 ? "ERR" : check.responseCode }}
+              </span>
+
+              <p class="text-sm text-gray-600">
+                {{ check.responseTime ? check.responseTime + " ms" : "—" }}
+              </p>
+            </div>
+          }
+
+          @if (totalPages > 1) {
+            <div
+              class="px-6 py-4 flex items-center justify-start border-t border-gray-100"
+            >
+              <p class="text-xs text-gray-400">
+                Page {{ currentPage + 1 }} of {{ totalPages }}
+              </p>
+              <div class="flex gap-2">
+                <button
+                  (click)="goToPage(currentPage - 1)"
+                  [disabled]="currentPage === 0"
+                  class="text-sm text-gray-500 hover:text-gray-900 disabled:opacity-30 transition"
+                >
+                  ← Prev
+                </button>
+                <button
+                  (click)="goToPage(currentPage + 1)"
+                  [disabled]="currentPage === totalPages - 1"
+                  class="text-sm text-gray-500 hover:text-gray-900 disabled:opacity-30 transition"
+                >
+                  Next →
+                </button>
+              </div>
+            </div>
+          }
+        }
+      </div>
+    }
+  </main>
+</div>

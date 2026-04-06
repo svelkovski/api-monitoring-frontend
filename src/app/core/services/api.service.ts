@@ -47,4 +47,8 @@ export class ApiService {
       { params },
     );
   }
+
+  getById(id: number): Observable<Api> {
+    return this.httpClient.get<Api>(`${this.apiUrl}/${id}`);
+  }
 }
