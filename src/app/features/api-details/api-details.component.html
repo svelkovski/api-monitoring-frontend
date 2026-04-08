@@ -112,32 +112,32 @@
               </p>
             </div>
           }
+        }
 
-          @if (totalPages > 1) {
-            <div
-              class="px-6 py-4 flex items-center justify-start border-t border-gray-100"
-            >
-              <p class="text-xs text-gray-400">
-                Page {{ currentPage + 1 }} of {{ totalPages }}
-              </p>
-              <div class="flex gap-2">
-                <button
-                  (click)="goToPage(currentPage - 1)"
-                  [disabled]="currentPage === 0"
-                  class="text-sm text-gray-500 hover:text-gray-900 disabled:opacity-30 transition"
-                >
-                  ← Prev
-                </button>
-                <button
-                  (click)="goToPage(currentPage + 1)"
-                  [disabled]="currentPage === totalPages - 1"
-                  class="text-sm text-gray-500 hover:text-gray-900 disabled:opacity-30 transition"
-                >
-                  Next →
-                </button>
-              </div>
+        @if (totalPages > 1) {
+          <div
+            class="px-6 py-3 flex items-center justify-between border-b border-gray-100"
+          >
+            <p class="text-xs text-gray-400">
+              Page {{ currentPage + 1 }} of {{ totalPages }}
+            </p>
+            <div class="flex gap-2">
+              <button
+                (click)="goToPage(currentPage - 1)"
+                [disabled]="currentPage === 0"
+                class="text-sm text-gray-500 hover:text-gray-900 disabled:opacity-30 transition"
+              >
+                ← Prev
+              </button>
+              <button
+                (click)="goToPage(currentPage + 1)"
+                [disabled]="currentPage === totalPages - 1"
+                class="text-sm text-gray-500 hover:text-gray-900 disabled:opacity-30 transition"
+              >
+                Next →
+              </button>
             </div>
-          }
+          </div>
         }
       </div>
     }
