@@ -29,4 +29,12 @@ export const routes: Routes = [
       ),
     canActivate: [authGuard],
   },
+  {
+    path: 'api/:id',
+    loadComponent: () =>
+      import('./features/api-details/api-details.component').then(
+        (m) => m.ApiDetailsComponent,
+      ),
+    canActivate: [authGuard],
+  },
 ];
