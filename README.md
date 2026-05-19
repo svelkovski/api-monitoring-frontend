@@ -15,4 +15,4 @@ It provides dashboards, API detail views, and interaction with the backend REST 
 - Add / edit / delete monitored APIs
 
 ## Related Repos
-Backend: https://github.com/yourorg/api-monitor-backend
+Backend: https://github.com/svelkovski/api-monitor-backend
